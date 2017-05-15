@@ -11,6 +11,8 @@ By: <a href="https://www.linkedin.com/in/rathachai/" target="_blank"><strong>Rat
 
 
   <script type="text/javascript">
+	  
+    var th_rough = 18;
 
     var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 17,
@@ -2192,7 +2194,7 @@ driveVal = [ 5.22,	5.2,	6.47,	16.37,	14.62,	6.61,	9.6,	10.58,	18.76,	11.48,	12.2
 
 	for(i=0; i<driveVal.length; i++){
 		var di = driveVal[i];
-		if(Math.abs(di)>12){
+		if(Math.abs(di)>th_rough){
 			var xcolor = "rgb(" + (Math.abs(Math.round(di))+100)  + ", 0, 0 )";
 			var cityCircle = new google.maps.Circle({
             			strokeColor: xcolor,
