@@ -12,8 +12,24 @@ By: <a href="https://www.linkedin.com/in/rathachai/" target="_blank"><strong>Rat
 <div id="map" style="width: 100%; height: 500px;margin-bottom: 20px"></div>
 
 <script type="text/javascript">
+
+    function getQparam(sParam){
+        var sPageURL = window.location.search.substring(1);
+        var sURLVariables = sPageURL.split('&');
+        for (var i = 0; i < sURLVariables.length; i++) 
+        {
+            var sParameterName = sURLVariables[i].split('=');
+            if (sParameterName[0] == sParam) 
+            {
+                return sParameterName[1];
+            }
+        }
+
+        return null;
+    }
+	
     function genMap(){
-          var threshold = 10;
+          //var threshold = 10;
           var map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 17,
                 center: {lat: (Math.max.apply(Math,driveData.map(function(a) {return a.lat;}))+Math.min.apply(Math,driveData.map(function(a) {return a.lat;})))/2 , lng: (Math.max.apply(Math,driveData.map(function(a) {return a.lng;}))+Math.min.apply(Math,driveData.map(function(a) {return a.lng;})))/2 } ,//driveData[Math.round(driveData.length/2)],
@@ -29,7 +45,7 @@ By: <a href="https://www.linkedin.com/in/rathachai/" target="_blank"><strong>Rat
               drivePath.setMap(map);
       	var driveVal= driveData.map(function(item) { return item["val"]; });
       	driveVal.sort(d3.ascending);
-      	threshold  = d3.quantile(driveVal, 0.99);
+      	//threshold  = d3.quantile(driveVal, 0.99);
         //threshold = 55;
       	for(i=0; i<driveData.length; i++){
       		var di = driveData[i].val;
@@ -56,7 +72,29 @@ By: <a href="https://www.linkedin.com/in/rathachai/" target="_blank"><strong>Rat
     };
     firebase.initializeApp(config);
     var driveData = [];
-    var recentPostsRef = firebase.database().ref('rc0018').limitToLast(2200);
+	
+    //config
+    var device = "rc0018";
+    var limitnum = 2200;
+    var threshold = 10;
+
+    //get query string
+    if(getQparam("dev")!=null){
+      device = getQparam("dev");
+    }
+
+    if(getQparam("limit")!=null){
+      limitnum = parseInt(getQparam("limit"));
+    }
+
+    if(getQparam("th")!=null){
+      threshold = parseInt(getQparam("th"));
+    }
+	
+    // Qeury data from firebase
+    var recentPostsRef = firebase.database().ref(device).limitToLast(limitnum);
+	
+	
     /*recentPostsRef.on("child_added", function(data){
      var rec = data.val();
      rec.val = rec.gx + rec.gy;
