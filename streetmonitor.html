@@ -103,7 +103,7 @@ By: <a href="https://www.linkedin.com/in/rathachai/" target="_blank"><strong>Rat
     recentPostsRef.once('value', snap =>{
       snap.forEach(item => {
           var rec = item.val();
-          rec.val = rec.gx + rec.gy;
+          rec.val = Math.abs(rec.gx) + Math.abs(rec.gy);
           driveData.push(rec);
       });
       genMap();
