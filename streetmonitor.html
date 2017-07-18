@@ -79,8 +79,10 @@ By: <a href="https://www.linkedin.com/in/rathachai/" target="_blank"><strong>Rat
       	for(i=0; i<driveData.length; i++){
       		var di = driveData[i].val;
       		if(Math.abs(di)>gThreshold){
-      			var xcolor = "rgb(" + (Math.abs(Math.round(di))+100)  + ", 0, 0 )";
-      			xcolor = "rgb(255,0,0)";
+      			var xred = (Math.abs(Math.round(di*10))+50);
+      			xred = xred>255?255:xred;
+      			var xcolor = "rgb(" + xred  + ", 0, 0 )";
+      			//xcolor = "rgb(255,0,0)";
       			var cityCircle = new google.maps.Circle({
                   			strokeColor: xcolor,
                   			strokeOpacity: 0.8,
@@ -89,7 +91,7 @@ By: <a href="https://www.linkedin.com/in/rathachai/" target="_blank"><strong>Rat
                   			fillOpacity: 0.35,
                   			map: map,
       				center: driveData[i],
-                  			radius: Math.sqrt(Math.abs(di))+1
+                  			radius: di/3 + 0.5 //Math.sqrt(Math.abs(di))*1.5
                		 });
       		}
       	}
