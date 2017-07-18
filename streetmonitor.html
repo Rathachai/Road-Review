@@ -29,24 +29,26 @@ By: <a href="https://www.linkedin.com/in/rathachai/" target="_blank"><strong>Rat
     }
 	
     function genMap(){
-          //var threshold = 10;
-          var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 17,
-                center: {lat: (Math.max.apply(Math,driveData.map(function(a) {return a.lat;}))+Math.min.apply(Math,driveData.map(function(a) {return a.lat;})))/2 , lng: (Math.max.apply(Math,driveData.map(function(a) {return a.lng;}))+Math.min.apply(Math,driveData.map(function(a) {return a.lng;})))/2 } ,//driveData[Math.round(driveData.length/2)],
+        //var threshold = 10;
+		var map = new google.maps.Map(document.getElementById('map'), {
+            	zoom: 17,
+            	center: {lat: (Math.max.apply(Math,driveData.map(function(a) {return a.lat;}))+Math.min.apply(Math,driveData.map(function(a) {return a.lat;})))/2 , lng: (Math.max.apply(Math,driveData.map(function(a) {return a.lng;}))+Math.min.apply(Math,driveData.map(function(a) {return a.lng;})))/2 } ,//driveData[Math.round(driveData.length/2)],
                 mapTypeId: 'terrain'
-              });
-              var drivePath= new google.maps.Polyline({
-                path: driveData,
-                geodesic: true,
-                strokeColor: '#005500',
-                strokeOpacity: 2.0,
-                strokeWeight: 3
-              });
-              drivePath.setMap(map);
+             });
+
+		var drivePath= new google.maps.Polyline({
+		        path: driveData,
+		        geodesic: true,
+		        strokeColor: '#005500',
+		        strokeOpacity: 2.0,
+		        strokeWeight: 3
+	      	});
+		drivePath.setMap(map);
+
       	var driveVal= driveData.map(function(item) { return item["val"]; });
       	driveVal.sort(d3.ascending);
-      	//threshold  = d3.quantile(driveVal, 0.99);
-        //threshold = 55;
+
+
       	for(i=0; i<driveData.length; i++){
       		var di = driveData[i].val;
       		if(Math.abs(di)>threshold){
@@ -64,12 +66,15 @@ By: <a href="https://www.linkedin.com/in/rathachai/" target="_blank"><strong>Rat
       		}
       	}
     }
+
+    // Firebase
     var config = {
       apiKey: " AIzaSyAqeBltX6C5KZ9Y054i_6VGL3n5bbC5NG4",
       authDomain: "rc-iot.firebaseapp.com",
       databaseURL: "https://rc-iot.firebaseio.com",
       storageBucket: "rc-iot.appspot.com"
     };
+
     firebase.initializeApp(config);
     var driveData = [];
 	
@@ -95,11 +100,6 @@ By: <a href="https://www.linkedin.com/in/rathachai/" target="_blank"><strong>Rat
     var recentPostsRef = firebase.database().ref(device).limitToLast(limitnum);
 	
 	
-    /*recentPostsRef.on("child_added", function(data){
-     var rec = data.val();
-     rec.val = rec.gx + rec.gy;
-     driveData.push(rec);
-    });*/
     recentPostsRef.once('value', snap =>{
       snap.forEach(item => {
           var rec = item.val();
