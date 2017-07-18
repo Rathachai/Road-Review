@@ -29,13 +29,14 @@ By: <a href="https://www.linkedin.com/in/rathachai/" target="_blank"><strong>Rat
     }
 	
     function genMap(){
-        //var threshold = 10;
 		var map = new google.maps.Map(document.getElementById('map'), {
             	zoom: 17,
             	center: {lat: (Math.max.apply(Math,driveData.map(function(a) {return a.lat;}))+Math.min.apply(Math,driveData.map(function(a) {return a.lat;})))/2 , lng: (Math.max.apply(Math,driveData.map(function(a) {return a.lng;}))+Math.min.apply(Math,driveData.map(function(a) {return a.lng;})))/2 } ,//driveData[Math.round(driveData.length/2)],
                 mapTypeId: 'terrain'
              });
 
+
+/*		
 		var drivePath= new google.maps.Polyline({
 		        path: driveData,
 		        geodesic: true,
@@ -44,15 +45,42 @@ By: <a href="https://www.linkedin.com/in/rathachai/" target="_blank"><strong>Rat
 		        strokeWeight: 3
 	      	});
 		drivePath.setMap(map);
+		
+*/
 
-      	var driveVal= driveData.map(function(item) { return item["val"]; });
-      	driveVal.sort(d3.ascending);
+
+		for (i = 0; i < driveData.length-1; i++) {
+			var lux = driveData[i].lx;
+			var strkcolor = lux>luxThreshold?"#00AA00":"#000000";
+			var strkwidth = lux>luxThreshold?3:1;
+
+			var loc1 = driveData[i];
+			var loc2 = driveData[i+1];
+
+			var dist = Math.sqrt(Math.pow(loc1.lat - loc2.lat,2) + Math.pow(loc1.lng - loc2.lng,2));
+
+			if(dist < 0.001 && dist > 0.00005){
+
+				var pathStyle = new google.maps.Polyline({
+					path: [loc1, loc2],
+					strokeColor: strkcolor,
+					strokeOpacity: 2.0,
+					strokeWeight: strkwidth
+				});
+
+				pathStyle.setMap(map);
+			}
+		}
+
+
+
 
 
       	for(i=0; i<driveData.length; i++){
       		var di = driveData[i].val;
-      		if(Math.abs(di)>threshold){
+      		if(Math.abs(di)>gThreshold){
       			var xcolor = "rgb(" + (Math.abs(Math.round(di))+100)  + ", 0, 0 )";
+      			xcolor = "rgb(255,0,0)";
       			var cityCircle = new google.maps.Circle({
                   			strokeColor: xcolor,
                   			strokeOpacity: 0.8,
@@ -61,7 +89,7 @@ By: <a href="https://www.linkedin.com/in/rathachai/" target="_blank"><strong>Rat
                   			fillOpacity: 0.35,
                   			map: map,
       				center: driveData[i],
-                  			radius: Math.sqrt(Math.abs(di))
+                  			radius: Math.sqrt(Math.abs(di))+3
                		 });
       		}
       	}
@@ -81,7 +109,8 @@ By: <a href="https://www.linkedin.com/in/rathachai/" target="_blank"><strong>Rat
     //config
     var device = "rc0018";
     var limitnum = 2200;
-    var threshold = 10;
+    var gThreshold = 10;
+    var luxThreshold = 5;
 
     //get query string
     if(getQparam("dev")!=null){
@@ -93,7 +122,7 @@ By: <a href="https://www.linkedin.com/in/rathachai/" target="_blank"><strong>Rat
     }
 
     if(getQparam("th")!=null){
-      threshold = parseInt(getQparam("th"));
+      gThreshold = parseInt(getQparam("th"));
     }
 	
     // Qeury data from firebase
